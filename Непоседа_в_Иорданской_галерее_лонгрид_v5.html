@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Непоседа в Иорданской галерее</title>
+<style>
+:root{
+  --velvet:#1e4632; --velvet-dark:#143325; --ochre:#c98b2d; --ochre-light:#e2a94a;
+  --terracotta:#b5552d; --warm:#f7f1e3; --cream:#fdf9ee; --ink:#3a2f24;
+  --graphite:#4a4a4a; --gold:#c9a24b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,'Times New Roman',serif;color:var(--ink);background:var(--cream);line-height:1.65}
+h1,h2,h3,.btn,.chip{font-family:'Trebuchet MS',Verdana,sans-serif}
+#progress{position:fixed;top:0;left:0;height:5px;width:0;background:var(--ochre);z-index:99;transition:width .15s}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+.act{display:inline-block;background:var(--terracotta);color:#fff;padding:6px 22px 6px 34px;border-radius:0 22px 22px 0;margin:34px 0 6px -18px;
+ font-family:'Trebuchet MS',sans-serif;font-weight:bold;letter-spacing:1.5px;font-size:14px;text-transform:uppercase;
+ box-shadow:0 3px 8px rgba(0,0,0,.25);position:relative}
+.act::after{content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--ochre-light)}
+section{padding:26px 0}
+p{margin:0 0 16px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.on{opacity:1;transform:none}
+.star-div{display:block;margin:26px auto;opacity:.8}
+/* титул */
+.hero{background:linear-gradient(160deg,var(--velvet) 0%,var(--velvet-dark) 70%,#0f281d 100%);color:var(--warm);
+ padding:70px 20px 80px;text-align:center;position:relative;overflow:hidden}
+.hero .orb{position:absolute;border-radius:50%;border:1px solid rgba(201,162,75,.35)}
+.hero h1{font-size:clamp(30px,6vw,46px);color:var(--ochre-light);margin:18px 0 10px;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+.hero .sub{font-style:italic;opacity:.9;max-width:520px;margin:0 auto}
+.avatar-ring{width:150px;height:150px;border-radius:50%;background:var(--warm);margin:0 auto;
+ border:6px solid var(--gold);box-shadow:0 0 0 10px rgba(201,162,75,.25),0 10px 26px rgba(0,0,0,.4);overflow:hidden}
+.avatar-ring svg{width:100%;height:100%;display:block}
+/* врезка-вопрос */
+.poll{background:var(--warm);border:2px dashed var(--ochre);border-radius:16px;padding:22px;margin:26px 0;text-align:center;box-shadow:0 6px 18px rgba(58,47,36,.12)}
+.poll h3{color:var(--terracotta);margin-bottom:6px}
+.poll .q{font-style:italic;margin-bottom:14px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:2px solid var(--ochre);
+ border-radius:12px;padding:10px 14px;margin:8px 0;cursor:pointer;font-family:Georgia,serif;font-size:16px;color:var(--ink);transition:.2s}
+.opt:hover{background:#fdf3dd;transform:translateX(4px)}
+.opt .ic{flex:0 0 30px}
+.opt.right{background:#e8f3e4;border-color:#4e7d43}
+.opt.wrong{background:#fbe9e2;border-color:var(--terracotta);opacity:.85}
+.fb{margin-top:12px;font-style:italic;color:var(--terracotta);min-height:24px}
+/* облачко Севы */
+.speech{display:flex;gap:12px;margin:22px 0;align-items:flex-start}
+.speech .mini{flex:0 0 56px;width:56px;height:56px;border-radius:50%;overflow:hidden;border:3px solid var(--gold);background:var(--warm)}
+.speech .mini svg{width:100%;height:100%}
+.bubble{background:#fff;border:1.5px solid var(--ochre);border-radius:4px 16px 16px 16px;padding:12px 16px;flex:1;
+ font-style:italic;box-shadow:0 4px 12px rgba(58,47,36,.1)}
+.bubble b{font-style:normal;font-family:'Trebuchet MS',sans-serif;color:var(--terracotta);display:block;margin-bottom:2px;font-size:13px;letter-spacing:.5px}
+/* заметка */
+.note{background:#fff9e8;border-left:5px solid var(--ochre);padding:16px 18px;margin:24px 0;border-radius:0 12px 12px 0;
+ box-shadow:0 4px 12px rgba(58,47,36,.1);position:relative}
+.note::before{content:"📌";position:absolute;top:-14px;left:-8px;font-size:22px}
+.note h3{color:var(--velvet);margin-bottom:6px}
+/* пазл */
+.frame-gold{border:8px solid transparent;border-radius:6px;position:relative;padding:6px;
+ background:linear-gradient(135deg,var(--gold),#8a6a24 40%,var(--gold) 60%,#9c7c30) border-box;
+ box-shadow:0 10px 26px rgba(58,47,36,.25)}
+.puzzle{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pz{border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:.2s}
+.pz svg{display:block;width:100%;height:auto}
+.pz .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(20,51,37,.85);color:var(--warm);font-size:11.5px;
+ font-family:'Trebuchet MS',sans-serif;text-align:center;padding:4px 4px;opacity:0;transition:.2s}
+.pz:hover .cap{opacity:1}
+.pz.done{cursor:default}
+.pz.done .cap{opacity:1}
+.pz.pending{opacity:.55;filter:grayscale(.6)}
+.pz.pending:hover{opacity:1;filter:none}
+.pz .tag{position:absolute;top:6px;right:6px;background:var(--ochre);color:#fff;border-radius:10px;font-size:11px;
+ padding:2px 8px;font-family:'Trebuchet MS',sans-serif}
+/* теория */
+.theory{display:grid;gap:14px;margin-top:20px}
+.tcard{background:#fff;border-radius:14px;padding:18px 18px 16px;border-top:6px solid var(--terracotta);
+ box-shadow:0 5px 16px rgba(58,47,36,.12);opacity:0;transform:translateY(14px);transition:.5s}
+.tcard.on{opacity:1;transform:none}
+.tcard h3{color:var(--velvet);margin-bottom:8px}
+.tcard.hidden{display:none}
+/* викторина */
+.qcard{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(58,47,36,.14);margin:22px 0}
+.qcard .scene{padding:0}
+.qcard .scene svg{display:block;width:100%;height:auto}
+.qcard .head{padding:14px 18px 4px}
+.qcard .head h3{color:var(--velvet)}
+.qcard .opts{padding:8px 18px 16px}
+.scorebar{display:flex;align-items:center;gap:12px;background:var(--velvet);color:var(--warm);border-radius:12px;padding:12px 18px;margin:18px 0}
+.scorebar .num{font-family:'Trebuchet MS',sans-serif;font-size:22px;color:var(--ochre-light);font-weight:bold}
+/* кейс */
+.case{background:linear-gradient(150deg,#3d3d3d,#2a2a2a);color:var(--warm);border-radius:16px;padding:22px;margin:24px 0;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.case h3{color:var(--ochre-light);margin-bottom:12px}
+.case .opt{background:rgba(255,255,255,.08);border-color:var(--ochre);color:var(--warm)}
+.case .opt:hover{background:rgba(226,169,74,.18)}
+.case .opt.right{background:#2e4a2a;border-color:#6f9a5b}
+.case .opt.wrong{background:#4a2e26;border-color:var(--terracotta)}
+/* рефлексия */
+.routes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+@media(max-width:560px){.routes{grid-template-columns:1fr}}
+.route{background:#fff;border:2px solid var(--velvet);border-radius:14px;padding:14px;cursor:pointer;transition:.2s;font-family:Georgia,serif}
+.route:hover{background:#eef5ec;transform:translateY(-2px)}
+.route b{display:flex;align-items:center;gap:8px;color:var(--velvet);font-family:'Trebuchet MS',sans-serif}
+.route .plan{display:none;margin-top:10px;font-size:14.5px}
+.route.open .plan{display:block}
+.route.open{background:#eef5ec}
+/* финал */
+.finale{background:linear-gradient(160deg,var(--velvet),var(--velvet-dark));color:var(--warm);text-align:center;padding:56px 20px 64px;margin-top:40px}
+.finale blockquote{font-style:italic;font-size:19px;max-width:540px;margin:18px auto;color:var(--ochre-light)}
+.btnrow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ochre);color:#fff;text-decoration:none;
+ padding:12px 24px;border-radius:26px;font-weight:bold;transition:.2s;box-shadow:0 5px 14px rgba(0,0,0,.3)}
+.btn.alt{background:var(--terracotta)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.finale .mini{width:74px;height:74px;border-radius:50%;overflow:hidden;border:4px solid var(--gold);margin:0 auto;background:var(--warm)}
+.finale .mini svg{width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ═══════════ АКТ 1. ТИТУЛ ═══════════ -->
+<section class="hero">
+  <div class="orb" style="width:220px;height:220px;top:-60px;left:-60px"></div>
+  <div class="orb" style="width:150px;height:150px;bottom:-40px;right:-30px"></div>
+  <div class="orb" style="width:90px;height:90px;top:60px;right:14%"></div>
+  <svg width="46" height="18" viewBox="0 0 46 18"><path d="M9 9l9-7 9 7-9 7z" fill="#c9a24b"/><path d="M27 9l9-7 9 7-9 7z" fill="#c9a24b" opacity=".6"/></svg>
+  <div class="avatar-ring">
+    <!-- АВАТАР СЕВЫ -->
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" fill="#f7f1e3"/>
+      <path d="M40,200 C42,158 68,146 100,146 C132,146 158,158 160,200 Z" fill="#2bab9d"/>
+      <path d="M84,146 L100,164 L116,146 Z" fill="#21907f"/>
+      <ellipse cx="100" cy="106" rx="43" ry="47" fill="#f6c9a0"/>
+      <circle cx="58" cy="110" r="10" fill="#f6c9a0"/><circle cx="142" cy="110" r="10" fill="#f6c9a0"/>
+      <circle cx="58" cy="110" r="4.5" fill="#e8ac7e"/><circle cx="142" cy="110" r="4.5" fill="#e8ac7e"/>
+      <!-- волосы: сплошная шапка поверх головы -->
+      <path d="M55,112 C50,56 72,32 100,32 C128,32 150,56 145,112 C142,102 138,94 133,88 C130,80 123,84 118,79 C112,72 105,79 100,74 C94,79 88,72 82,79 C77,84 70,80 67,88 C62,94 58,102 55,112 Z" fill="#7a4a21"/>
+      <path d="M96,34 C90,20 100,12 110,18 C102,20 98,26 101,34 Z" fill="#5d3517"/>
+      <path d="M60,108 L58,126 L66,124 L66,108 Z" fill="#7a4a21"/>
+      <path d="M140,108 L142,126 L134,124 L134,108 Z" fill="#7a4a21"/>
+      <!-- брови -->
+      <path d="M76,95 Q86,89 95,93" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M105,93 Q114,89 124,95" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- глаза -->
+      <ellipse cx="86" cy="106" rx="8" ry="9.5" fill="#fff"/>
+      <circle cx="86" cy="107" r="5" fill="#4a2e14"/>
+      <circle cx="88" cy="105" r="1.8" fill="#fff"/>
+      <ellipse cx="114" cy="106" rx="8" ry="9.5" fill="#fff"/>
+      <circle cx="114" cy="107" r="5" fill="#4a2e14"/>
+      <circle cx="116" cy="105" r="1.8" fill="#fff"/>
+      <!-- румянец -->
+      <ellipse cx="72" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/>
+      <ellipse cx="128" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/>
+      <!-- нос и улыбка -->
+      <path d="M100,108 Q103,117 98,119" stroke="#d99e74" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M87,129 Q100,142 113,129" stroke="#b3543f" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M93,138 Q100,143 107,138 L104,141 Q100,144 96,141 Z" fill="#fff"/>
+    </svg>
+  </div>
+  <h1>Непоседа в Иорданской галерее</h1>
+  <p class="sub">История Севы, который нашёл в Эрмитаже «своё», — интерактивный скролл-лонгрид, где ты не читаешь, а играешь вместе с героем.</p>
+  <svg width="120" height="16" viewBox="0 0 120 16" style="margin-top:22px;opacity:.7">
+    <path d="M0 8h45" stroke="#c9a24b"/><circle cx="60" cy="8" r="5" fill="#c9a24b"/><path d="M75 8h45" stroke="#c9a24b"/></svg>
+</section>
+
+<div class="wrap">
+
+<!-- ═══════════ АКТ 2. ОТКРЫТИЕ ═══════════ -->
+<div class="act reveal">Акт 1 · Открытие</div>
+<section class="reveal">
+  <p>Класс спускается в Иорданскую галерею — просторный зал с беломраморной лестницей, откуда когда-то императоры выходили к народу после коронаций. Преподаватель объясняет про мозаику «Христос Пантократор» XII века, и ты вдруг понимаешь: то, что блестит на стенах под потолком, — это не просто камни. Это картина, собранная из миллиона кусочков стекла, которые старше самой Москвы.</p>
+  <p>Но чем интереснее зал, тем труднее стоять ровно. Сева зашевелился, потянулся за тобой к витрине, задел сигнальную ленту — и вот уже хмурый смотритель ведёт вас к выходу. Слушок по классу расходится быстрее, чем по школьному чату: «Сева опять отличился».</p>
+  <div class="speech">
+    <div class="mini"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#f7f1e3"/><path d="M40,200 C42,158 68,146 100,146 C132,146 158,158 160,200 Z" fill="#2bab9d"/><path d="M84,146 L100,164 L116,146 Z" fill="#21907f"/><ellipse cx="100" cy="106" rx="43" ry="47" fill="#f6c9a0"/><circle cx="58" cy="110" r="10" fill="#f6c9a0"/><circle cx="142" cy="110" r="10" fill="#f6c9a0"/><circle cx="58" cy="110" r="4.5" fill="#e8ac7e"/><circle cx="142" cy="110" r="4.5" fill="#e8ac7e"/><path d="M55,112 C50,56 72,32 100,32 C128,32 150,56 145,112 C142,102 138,94 133,88 C130,80 123,84 118,79 C112,72 105,79 100,74 C94,79 88,72 82,79 C77,84 70,80 67,88 C62,94 58,102 55,112 Z" fill="#7a4a21"/><path d="M96,34 C90,20 100,12 110,18 C102,20 98,26 101,34 Z" fill="#5d3517"/><path d="M60,108 L58,126 L66,124 L66,108 Z" fill="#7a4a21"/><path d="M140,108 L142,126 L134,124 L134,108 Z" fill="#7a4a21"/><path d="M76,95 Q86,89 95,93" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M105,93 Q114,89 124,95" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="86" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="86" cy="107" r="5" fill="#4a2e14"/><circle cx="88" cy="105" r="1.8" fill="#fff"/><ellipse cx="114" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="114" cy="107" r="5" fill="#4a2e14"/><circle cx="116" cy="105" r="1.8" fill="#fff"/><ellipse cx="72" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><ellipse cx="128" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><path d="M100,108 Q103,117 98,119" stroke="#d99e74" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M87,129 Q100,142 113,129" stroke="#b3543f" stroke-width="4" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="bubble"><b>СЕВА</b>«Ну и зачем я вообще сюда пришёл? Мне бы в волейбол, а не мрамор рассматривать… И что теперь за наказание будет?»</div>
+  </div>
+  <p>Наказание оказалось хитрее, чем можно было подумать. Преподаватель говорит: «Раз тебе так важно двигаться, ты в следующую субботу проведёшь экскурсию для своей младшей сестры Маши. По-настоящему. С историей, с вопросами, с ответами». Сева кивает с кислым лицом, а внутри всё сжимается: он ведь не знает в галерее ничего, кроме мозаичного потолка над лестницей.</p>
+  <p>Вечером того же дня, лёжа на диване с ноутбуком, ты листаешь страницы и вдруг натыкаешься на странное слово — «Игротека» Эрмитажной академии. Игры? В Эрмитаже? Ты нажимаешь — и экран наполняется заданиями: собрать картину, угадать жанр, провести экскурсию. Сева подсаживается ближе. Так начинается настоящая игра.</p>
+  <div class="note">
+    <h3>Заметка автора</h3>
+    <p style="margin:0">Эрмитаж — один из крупнейших музеев мира, а его коллекция начинается с Екатерины II. Игротека академии при музее создана для школьников: там можно потренироваться в том же, в чём сейчас тренируется Сева.</p>
+  </div>
+
+  <div class="poll">
+    <h3>Вопрос перед стартом</h3>
+    <p class="q">Как, по-твоему, поступит Сева дальше?</p>
+    <button class="opt" data-fb="Не угадал: от такого Сева просто вздохнул бы и забросил ноутбук. Попробуй ещё раз."><span class="ic">🚪</span>Пойдёт провиниться и всё списать</button>
+    <button class="opt" data-fb="Не угадал: Сева отставал бы от всех, а не побежал вперёд. Попробуй ещё раз."><span class="ic">🐌</span>Потянется время, отстанет от группы</button>
+    <button class="opt" data-fb="Верно! Игра оказалась сильнее скуки — за один вечер Сева открыл для себя весь музей."><span class="ic">🎮</span>Увлечётся игрой из Игротеки</button>
+    <div class="fb" id="poll-fb"></div>
+  </div>
+</section>
+
+<!-- ═══════════ АКТ 3. ПАЗЛ ═══════════ -->
+<div class="act reveal">Акт 2 · Собери картину</div>
+<section class="reveal">
+  <p>Первое задание в Игротеке — собрать картину из шести фрагментов. На экране сетка три на два, а в углу — обрывок репродукции. Сева тащит первый кусок наугад — мимо. Второй — снова мимо. На пятой попытке экран вздрагивает зелёной вспышкой: фрагменты встают на место, и перед вами оживает охотничья сцена — пес, фазан, лес и охотник. Твоя очередь: кликни по каждому фрагменту и собери её сам.</p>
+
+  <div class="frame-gold">
+    <div class="puzzle" id="puzzle">
+      <div class="pz pending" data-id="1"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#bcd9ea"/><path d="M60,88 C60,60 56,50 60,42 C64,50 60,60 60,88 Z" fill="#6b4423"/><circle cx="60" cy="34" r="20" fill="#4e7d43"/><circle cx="40" cy="42" r="14" fill="#5d8f50"/><circle cx="80" cy="42" r="14" fill="#5d8f50"/><circle cx="60" cy="26" r="12" fill="#6b9c58"/></svg><span class="cap">Старый дуб</span><span class="tag">1/6</span></div>
+      <div class="pz pending" data-id="2"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#e8dcc0"/><ellipse cx="62" cy="56" rx="22" ry="13" fill="#b5552d"/><circle cx="86" cy="44" r="8" fill="#c9762d"/><path d="M92,40 L104,38 L104,44 Z" fill="#c9762d"/><path d="M40,56 C24,52 12,58 6,70" stroke="#8a5a2d" stroke-width="3" fill="none"/><circle cx="60" cy="50" r="2" fill="#3a2f24"/></svg><span class="cap">Фазан на лугу</span><span class="tag">2/6</span></div>
+      <div class="pz pending" data-id="3"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#9ec3dd"/><circle cx="30" cy="24" r="11" fill="#e2a94a"/><path d="M60,90 L75,40 L90,90 Z" fill="#2e5b3a"/><path d="M85,90 L98,48 L111,90 Z" fill="#3a6e46"/><path d="M45,90 L56,52 L67,90 Z" fill="#2e5b3a"/></svg><span class="cap">Ели и солнце</span><span class="tag">3/6</span></div>
+      <div class="pz pending" data-id="4"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#c3d6c2"/><circle cx="60" cy="52" r="9" fill="#f6c9a0"/><path d="M52,64 L68,64 L66,90 L54,90 Z" fill="#6b7f4e"/><path d="M68,66 L84,52" stroke="#3a2f24" stroke-width="4" stroke-linecap="round"/><path d="M52,66 L44,78" stroke="#6b7f4e" stroke-width="4" stroke-linecap="round"/><path d="M68,66 L76,78" stroke="#6b7f4e" stroke-width="4" stroke-linecap="round"/></svg><span class="cap">Охотник с ружьём</span><span class="tag">4/6</span></div>
+      <div class="pz pending" data-id="5"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#d8c9a3"/><path d="M34,62 C30,46 40,40 52,42 C60,36 70,40 72,50 C80,50 82,58 76,62 Z" fill="#8a5a2d"/><path d="M76,52 L88,48 L86,56 L76,58 Z" fill="#8a5a2d"/><path d="M36,62 L34,80 M48,62 L48,80 M62,62 L62,80 M72,62 L76,80" stroke="#6b4423" stroke-width="4" stroke-linecap="round"/><path d="M88,46 L92,38" stroke="#3a2f24" stroke-width="2.5" stroke-linecap="round"/></svg><span class="cap">Собака в стойке</span><span class="tag">5/6</span></div>
+      <div class="pz pending" data-id="6"><svg viewBox="0 0 120 90"><rect width="120" height="90" fill="#cfe3cf"/><path d="M0,58 C20,54 40,62 60,58 C80,54 100,62 120,58 L120,90 L0,90 Z" fill="#a8c98a"/><path d="M10,66 L14,86 M22,64 L26,86 M38,68 L42,86 M56,66 L60,86 M74,68 L78,86 M92,64 L96,86 M106,68 L110,86" stroke="#5d8f50" stroke-width="2.5" stroke-linecap="round"/><circle cx="100" cy="20" r="9" fill="#f0d78a"/></svg><span class="cap">Луг и небо</span><span class="tag">6/6</span></div>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:13px;color:#8a7a5c;font-style:italic;margin-top:8px">Кликай по фрагментам — каждый встанет на своё место картины.</p>
+
+  <div id="theory" style="display:none">
+    <div class="speech">
+      <div class="mini"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#f7f1e3"/><path d="M40,200 C42,158 68,146 100,146 C132,146 158,158 160,200 Z" fill="#2bab9d"/><path d="M84,146 L100,164 L116,146 Z" fill="#21907f"/><ellipse cx="100" cy="106" rx="43" ry="47" fill="#f6c9a0"/><circle cx="58" cy="110" r="10" fill="#f6c9a0"/><circle cx="142" cy="110" r="10" fill="#f6c9a0"/><circle cx="58" cy="110" r="4.5" fill="#e8ac7e"/><circle cx="142" cy="110" r="4.5" fill="#e8ac7e"/><path d="M55,112 C50,56 72,32 100,32 C128,32 150,56 145,112 C142,102 138,94 133,88 C130,80 123,84 118,79 C112,72 105,79 100,74 C94,79 88,72 82,79 C77,84 70,80 67,88 C62,94 58,102 55,112 Z" fill="#7a4a21"/><path d="M96,34 C90,20 100,12 110,18 C102,20 98,26 101,34 Z" fill="#5d3517"/><path d="M60,108 L58,126 L66,124 L66,108 Z" fill="#7a4a21"/><path d="M140,108 L142,126 L134,124 L134,108 Z" fill="#7a4a21"/><path d="M76,95 Q86,89 95,93" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M105,93 Q114,89 124,95" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="86" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="86" cy="107" r="5" fill="#4a2e14"/><circle cx="88" cy="105" r="1.8" fill="#fff"/><ellipse cx="114" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="114" cy="107" r="5" fill="#4a2e14"/><circle cx="116" cy="105" r="1.8" fill="#fff"/><ellipse cx="72" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><ellipse cx="128" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><path d="M100,108 Q103,117 98,119" stroke="#d99e74" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M87,129 Q100,142 113,129" stroke="#b3543f" stroke-width="4" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="bubble"><b>СЕВА</b>«Ты только посмотри, что получилось! Пёс, фазан, ружьё… Это же целая история в одной раме. А как такое называется?»</div>
+    </div>
+    <div class="theory">
+      <div class="tcard"><h3>Жанр — это «паспорт» картины</h3><p>Художники делят картины на жанры по тому, что в центре внимания: человек, животное, предмет, природа или событие. Знать жанр — значит сразу понимать, на что смотреть и о чём спросить у картины.</p></div>
+      <div class="tcard"><h3>Охотничья сцена</h3><p>Наша собранная картина — охотничья сцена: в ней есть и животные, и человек, и природа, но сюжет держит одно событие — выслеживание дичи. Такие картины писали и в XVIII веке, и до сих пор.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ АКТ 4. ВИКТОРИНА ═══════════ -->
+<div class="act reveal">Акт 3 · Угадай жанр</div>
+<section class="reveal">
+  <p>Следующий уровень Игротеки — викторина. На экране четыре «живые» картинки, а тебе нужно определить жанр каждой. Сева берётся щёлкать ответы на скорость — и ошибается. Ты можешь помочь ему: читай внимательно, смотри на детали, а если сомневаешься — выбирай ответ, который звучит логичнее всего. Счёт вверху будет считать твои очки.</p>
+
+  <div class="scorebar"><span class="num" id="score">0 / 4</span><span id="score-msg">Поехали! Четыре картины — четыре загадки.</span></div>
+
+  <div class="qcard">
+    <div class="scene"><svg viewBox="0 0 600 260"><rect width="600" height="260" fill="#8a7355"/><rect x="30" y="20" width="540" height="180" fill="#a8906c"/><rect x="30" y="20" width="540" height="180" fill="none" stroke="#c9a24b" stroke-width="6"/><ellipse cx="300" cy="150" rx="80" ry="42" fill="#8a5a2d"/><circle cx="380" cy="120" r="26" fill="#8a5a2d"/><path d="M398,112 L430,108 L428,122 L398,124 Z" fill="#8a5a2d"/><ellipse cx="330" cy="150" rx="34" ry="20" fill="#a06a3a"/><path d="M370,120 Q378,104 386,112" stroke="#5d3517" stroke-width="4" fill="none"/><circle cx="300" cy="196" r="7" fill="#6b4423"/><circle cx="330" cy="198" r="7" fill="#6b4423"/></svg></div>
+    <div class="head"><h3>Картина 1</h3><p>Пёс лежит у стены с подстреленной дичью. Всё внимание — зверю.</p></div>
+    <div class="opts">
+      <button class="opt" data-q="1" data-ok="0"><span class="ic">🏙️</span>Городская улица — это бытовой жанр</button>
+      <button class="opt" data-q="1" data-ok="1"><span class="ic">🐾</span>Главный герой — животное: анималистический жанр</button>
+      <button class="opt" data-q="1" data-ok="0"><span class="ic">🍋</span>Лежат предметы: натюрморт</button>
+    </div>
+  </div>
+
+  <div class="qcard">
+    <div class="scene"><svg viewBox="0 0 600 260"><rect width="600" height="260" fill="#4a3423"/><rect x="0" y="180" width="600" height="80" fill="#6b5236"/><rect x="120" y="150" width="360" height="14" fill="#8a6a3a"/><rect x="150" y="164" width="12" height="46" fill="#5d4020"/><rect x="440" y="164" width="12" height="46" fill="#5d4020"/><circle cx="180" cy="90" r="20" fill="#f6c9a0"/><rect x="168" y="112" width="26" height="40" rx="6" fill="#7a3b4a"/><circle cx="240" cy="86" r="20" fill="#f6c9a0"/><rect x="228" y="108" width="26" height="44" rx="6" fill="#3f5d7a"/><circle cx="300" cy="82" r="20" fill="#f6c9a0"/><rect x="288" y="104" width="26" height="48" rx="6" fill="#6b4423"/><circle cx="360" cy="88" r="20" fill="#f6c9a0"/><rect x="348" y="110" width="26" height="42" rx="6" fill="#5d6b3f"/><circle cx="420" cy="92" r="20" fill="#f6c9a0"/><rect x="408" y="114" width="26" height="38" rx="6" fill="#7a5a8a"/><rect x="196" y="96" width="8" height="56" fill="#e2a94a"/><circle cx="200" cy="92" r="5" fill="#f5c76a"/><rect x="396" y="96" width="8" height="56" fill="#e2a94a"/><circle cx="400" cy="92" r="5" fill="#f5c76a"/><ellipse cx="300" cy="146" rx="52" ry="8" fill="#e8dcc0"/></svg></div>
+    <div class="head"><h3>Картина 2</h3><p>Длинный стол, свечи, пять гостей за ужином в усадьбе.</p></div>
+    <div class="opts">
+      <button class="opt" data-q="2" data-ok="1"><span class="ic">👥</span>Люди за повседневным делом: бытовой жанр</button>
+      <button class="opt" data-q="2" data-ok="0"><span class="ic">🌳</span>Много деревьев вокруг: пейзаж</button>
+      <button class="opt" data-q="2" data-ok="0"><span class="ic">🐾</span>Животные в центре: анималистический жанр</button>
+    </div>
+  </div>
+
+  <div class="qcard">
+    <div class="scene"><svg viewBox="0 0 600 260"><rect width="600" height="260" fill="#3a2a1e"/><rect x="0" y="210" width="600" height="50" fill="#2a1d12"/><path d="M250,90 C250,70 350,70 350,90 L342,180 L258,180 Z" fill="#c9a24b"/><ellipse cx="300" cy="90" rx="50" ry="14" fill="#e0bc6a"/><rect x="252" y="100" width="96" height="10" fill="#a8842e"/><circle cx="300" cy="46" r="16" fill="#e0bc6a"/><rect x="292" y="60" width="16" height="8" fill="#c9a24b"/><ellipse cx="210" cy="190" rx="34" ry="12" fill="#f5e05a"/><ellipse cx="218" cy="184" rx="10" ry="7" fill="#f5e05a"/><rect x="246" y="186" width="60" height="4" rx="2" fill="#e0c85a"/><circle cx="392" cy="186" r="14" fill="#6b2d8a"/><circle cx="378" cy="178" r="10" fill="#6b2d8a"/><circle cx="404" cy="176" r="10" fill="#7a3d9a"/><circle cx="390" cy="166" r="9" fill="#6b2d8a"/></svg></div>
+    <div class="head"><h3>Картина 3</h3><p>Кубок с лимоном и ветка винограда на тёмном фоне.</p></div>
+    <div class="opts">
+      <button class="opt" data-q="3" data-ok="0"><span class="ic">👥</span>Здесь люди на празднике: бытовой жанр</button>
+      <button class="opt" data-q="3" data-ok="0"><span class="ic">🌳</span>Природа вокруг: пейзаж</button>
+      <button class="opt" data-q="3" data-ok="1"><span class="ic">🍋</span>Собраны только предметы: натюрморт</button>
+    </div>
+  </div>
+
+  <div class="qcard">
+    <div class="scene"><svg viewBox="0 0 600 260"><rect width="600" height="260" fill="#b8d4e8"/><circle cx="470" cy="60" r="30" fill="#f0d78a"/><path d="M0,150 C80,140 140,160 220,150 C300,140 360,166 440,152 C500,144 560,158 600,150 L600,260 L0,260 Z" fill="#8fb68a"/><path d="M140,160 C180,240 260,250 320,240 C380,230 420,200 470,196 L470,260 L140,260 Z" fill="#6da3c9"/><path d="M120,150 L145,96 L170,150 Z" fill="#3a6e46"/><path d="M168,150 L190,106 L212,150 Z" fill="#2e5b3a"/><path d="M200,150 L220,110 L240,150 Z" fill="#3a6e46"/><rect x="480" y="150" width="56" height="40" fill="#b5846a"/><path d="M474,152 L508,128 L542,152 Z" fill="#7a4a33"/><rect x="498" y="164" width="14" height="26" fill="#5d4020"/></svg></div>
+    <div class="head"><h3>Картина 4</h3><p>Даль с рощей, рекой и домиком на пригорке.</p></div>
+    <div class="opts">
+      <button class="opt" data-q="4" data-ok="1"><span class="ic">🌳</span>Природа без сюжета с людьми: пейзаж</button>
+      <button class="opt" data-q="4" data-ok="0"><span class="ic">🍋</span>Внимание к предметам: натюрморт</button>
+      <button class="opt" data-q="4" data-ok="0"><span class="ic">🐾</span>Животные в центре: анималистический жанр</button>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="mini"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#f7f1e3"/><path d="M40,200 C42,158 68,146 100,146 C132,146 158,158 160,200 Z" fill="#2bab9d"/><path d="M84,146 L100,164 L116,146 Z" fill="#21907f"/><ellipse cx="100" cy="106" rx="43" ry="47" fill="#f6c9a0"/><circle cx="58" cy="110" r="10" fill="#f6c9a0"/><circle cx="142" cy="110" r="10" fill="#f6c9a0"/><circle cx="58" cy="110" r="4.5" fill="#e8ac7e"/><circle cx="142" cy="110" r="4.5" fill="#e8ac7e"/><path d="M55,112 C50,56 72,32 100,32 C128,32 150,56 145,112 C142,102 138,94 133,88 C130,80 123,84 118,79 C112,72 105,79 100,74 C94,79 88,72 82,79 C77,84 70,80 67,88 C62,94 58,102 55,112 Z" fill="#7a4a21"/><path d="M96,34 C90,20 100,12 110,18 C102,20 98,26 101,34 Z" fill="#5d3517"/><path d="M60,108 L58,126 L66,124 L66,108 Z" fill="#7a4a21"/><path d="M140,108 L142,126 L134,124 L134,108 Z" fill="#7a4a21"/><path d="M76,95 Q86,89 95,93" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M105,93 Q114,89 124,95" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="86" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="86" cy="107" r="5" fill="#4a2e14"/><circle cx="88" cy="105" r="1.8" fill="#fff"/><ellipse cx="114" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="114" cy="107" r="5" fill="#4a2e14"/><circle cx="116" cy="105" r="1.8" fill="#fff"/><ellipse cx="72" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><ellipse cx="128" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><path d="M100,108 Q103,117 98,119" stroke="#d99e74" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M87,129 Q100,142 113,129" stroke="#b3543f" stroke-width="4" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="bubble"><b>СЕВА</b>«Четыре из четырёх?! Теперь я знаю, как мне объяснить Маше каждую картину в галерее. Дай мне ещё!»</div>
+  </div>
+</section>
+
+<!-- ═══════════ АКТ 5. КЕЙС И РЕФЛЕКСИЯ ═══════════ -->
+<div class="act reveal">Акт 4 · Месяц спустя</div>
+<section class="reveal">
+  <p>Проходит месяц. Суббота, полдень, Иорданская галерея. Маша вздыхает: «Скучно, Сёва, всё одно и то же». Он спокойно выпрямляется, набирает воздух и начинает — с того самого фрагмента, с которого начиналась его игра. Ты стоишь рядом, как его напарник, и следишь: он не путает жанры, задаёт Маше вопросы, а на «а зачем?» у него готов ответ. Его больше не тянет к волейболу. Его тянет рассказывать.</p>
+  <p>А теперь проверь себя: как из этого вышел бы ты? Перед тобой три реплики экскурсовода — выбери ту, которая действительно увлечёт Машу.</p>
+
+  <div class="case">
+    <h3>Ты — экскурсовод</h3>
+    <button class="opt" data-fb="Маша зевнёт: слишком много дат подряд, а истории нет. Попробуй другую реплику."><span class="ic">🗓️</span>«В 1858 году мозаику перенесли сюда из Зимнего дворца. Запомни дату».</button>
+    <button class="opt right-fb" data-fb="Верно! Маша сразу видит кусочки — и вопросы сами подступают к языку."><span class="ic">✨</span>«Смотри, Маша: эта вся стена — картина из миллиона кусочков стекла. Найди самый блестящий!»</button>
+    <button class="opt" data-fb="Маша пожмёт плечами: без истории и без игры слова «икона» звучат как домашнее задание."><span class="ic">📖</span>«Это икона. Она древняя и очень важная для истории».</button>
+    <div class="fb" style="color:var(--ochre-light)" id="case-fb"></div>
+  </div>
+
+  <p>После экскурсии Сева открывает в себе неожиданное: ему нравится быть тем, кто ведёт. Он не стал «тихим» музейным человеком — он остался собой, просто нашёл место, где его энергия стала силой. Пройди и ты маленькую рефлексию: какой маршрут в Иорданской галерее открыл бы именно тебя?</p>
+
+  <div class="routes">
+    <button class="route"><b>🏃 Маршрут для непоседы</b><div class="plan">1. Начни от лестницы и мозаики — считай кусочки стекла.<br>2. Найди самую старую деталь зала.<br>3. Придумай одну историю про любую скульптуру.</div></button>
+    <button class="route"><b>🔍 Маршрут для тихого наблюдателя</b><div class="plan">1. Выбери одну картину и встань напротив на пять минут.<br>2. Найди три детали, которые не заметил бы при беглом взгляде.<br>3. Спроси себя: что художник хотел, чтобы ты почувствовал?</div></button>
+    <button class="route"><b>🎨 Маршрут для художника</b><div class="plan">1. Возьми блокнот и зарисуй фрагмент мозаики.<br>2. Сравни композицию зала с картиной из Игротеки.<br>3. Придумай свой натюрморт из трёх предметов зала.</div></button>
+    <button class="route"><b>🎮 Маршрут для игрока</b><div class="plan">1. Пройди Игротеку до финала.<br>2. Устрой викторину для друзей в зале.<br>3. Составь свой «уровень» из картин, которые запомнил.</div></button>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════ ФИНАЛ ═══════════ -->
+<section class="finale">
+  <div class="mini"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#f7f1e3"/><path d="M40,200 C42,158 68,146 100,146 C132,146 158,158 160,200 Z" fill="#2bab9d"/><path d="M84,146 L100,164 L116,146 Z" fill="#21907f"/><ellipse cx="100" cy="106" rx="43" ry="47" fill="#f6c9a0"/><circle cx="58" cy="110" r="10" fill="#f6c9a0"/><circle cx="142" cy="110" r="10" fill="#f6c9a0"/><circle cx="58" cy="110" r="4.5" fill="#e8ac7e"/><circle cx="142" cy="110" r="4.5" fill="#e8ac7e"/><path d="M55,112 C50,56 72,32 100,32 C128,32 150,56 145,112 C142,102 138,94 133,88 C130,80 123,84 118,79 C112,72 105,79 100,74 C94,79 88,72 82,79 C77,84 70,80 67,88 C62,94 58,102 55,112 Z" fill="#7a4a21"/><path d="M96,34 C90,20 100,12 110,18 C102,20 98,26 101,34 Z" fill="#5d3517"/><path d="M60,108 L58,126 L66,124 L66,108 Z" fill="#7a4a21"/><path d="M140,108 L142,126 L134,124 L134,108 Z" fill="#7a4a21"/><path d="M76,95 Q86,89 95,93" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M105,93 Q114,89 124,95" stroke="#5d3517" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="86" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="86" cy="107" r="5" fill="#4a2e14"/><circle cx="88" cy="105" r="1.8" fill="#fff"/><ellipse cx="114" cy="106" rx="8" ry="9.5" fill="#fff"/><circle cx="114" cy="107" r="5" fill="#4a2e14"/><circle cx="116" cy="105" r="1.8" fill="#fff"/><ellipse cx="72" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><ellipse cx="128" cy="120" rx="8" ry="5" fill="#f2a29b" opacity=".65"/><path d="M100,108 Q103,117 98,119" stroke="#d99e74" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M87,129 Q100,142 113,129" stroke="#b3543f" stroke-width="4" fill="none" stroke-linecap="round"/></svg></div>
+  <blockquote>«Сначала мне было скучно, а потом я понял: музей — это игра, в которой выигрывает тот, кто присмотрелся». — Сева</blockquote>
+  <div class="btnrow">
+    <a class="btn" href="https://academy.hermitagemuseum.org/games" target="_blank" rel="noopener">🎮 Игротека академии</a>
+    <a class="btn alt" href="https://www.hermitagemuseum.org/visits/virtual_visit/" target="_blank" rel="noopener">🏛️ Виртуальный визит</a>
+  </div>
+</section>
+
+<script>
+(function(){
+  var bar=document.getElementById('progress');
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(window.scrollY/(h||1)*100)+'%';
+  }
+  window.addEventListener('scroll',onScroll); onScroll();
+
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); obs.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal,.tcard').forEach(function(el){obs.observe(el)});
+
+  // врезка-вопрос
+  var fb=document.getElementById('poll-fb');
+  document.querySelectorAll('.poll .opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var ok=b.textContent.indexOf('Увлечётся')>-1;
+      document.querySelectorAll('.poll .opt').forEach(function(x){x.classList.remove('right','wrong')});
+      b.classList.add(ok?'right':'wrong');
+      fb.textContent=b.getAttribute('data-fb');
+      if(ok && !document.querySelector('.poll .star')) {
+        fb.insertAdjacentHTML('afterend','<div class="fb" style="color:#4e7d43">✓ Отличный старт! Дальше — больше.</div>');
+      }
+    });
+  });
+
+  // пазл
+  var pzDone=0, pzTotal=6;
+  document.querySelectorAll('#puzzle .pz').forEach(function(p){
+    p.addEventListener('click',function(){
+      if(p.classList.contains('done')) return;
+      p.classList.remove('pending'); p.classList.add('done');
+      p.querySelector('.tag').textContent='✓';
+      pzDone++;
+      if(pzDone===pzTotal){
+        var th=document.getElementById('theory'); th.style.display='block';
+        th.querySelectorAll('.tcard').forEach(function(c,i){ setTimeout(function(){c.classList.add('on')},200+i*350); });
+        setTimeout(function(){ th.scrollIntoView({behavior:'smooth',block:'center'}); },150);
+      }
+    });
+  });
+
+  // викторина
+  var score=0, answered={};
+  document.querySelectorAll('.qcard .opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var q=b.getAttribute('data-q'), ok=b.getAttribute('data-ok')==='1';
+      var card=b.closest('.qcard');
+      if(answered[q]) return;
+      answered[q]=true;
+      card.querySelectorAll('.opt').forEach(function(x){
+        x.classList.remove('right','wrong');
+        x.style.pointerEvents='none';
+        if(x.getAttribute('data-ok')==='1'){x.classList.add('right');}
+        else if(x===b){x.classList.add('wrong');}
+      });
+      if(ok) score++;
+      var s=document.getElementById('score'); s.textContent=score+' / 4';
+      var m=document.getElementById('score-msg');
+      m.textContent = score===4 ? 'Идеально! Сева гордится тобой.' :
+                      score>=2 ? 'Хорошо! Ещё чуть-чуть — и будет идеально.' :
+                      'Не страшно, ошибки — тоже часть игры.';
+    });
+  });
+
+  // кейс
+  var cfb=document.getElementById('case-fb');
+  document.querySelectorAll('.case .opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var ok=b.classList.contains('right-fb');
+      document.querySelectorAll('.case .opt').forEach(function(x){x.classList.remove('right','wrong')});
+      b.classList.add(ok?'right':'wrong');
+      cfb.textContent=b.getAttribute('data-fb');
+    });
+  });
+
+  // маршруты
+  document.querySelectorAll('.route').forEach(function(r){
+    r.addEventListener('click',function(){ r.classList.toggle('open'); });
+  });
+})();
+</script>
+</body>
+</html>
